@@ -31,7 +31,8 @@ def pdb2backbone(pdb_file):
         for atom in residue:
             if atom.name in ['CA', 'C', 'N', 'O']:
                 atoms_per_res.append(atom.get_coord())
-        backbone.append(np.array(atoms_per_res))
+        if len(atoms_per_res) == 4:
+            backbone.append(np.array(atoms_per_res))
     return backbone
 
 
@@ -51,14 +52,12 @@ def standardize(backbones, num_res=128):
     return np.array(backbones_std)
 
 
-def to_pkl(backbones_std):
-    pkl_file = os.getcwd() + '/protein_backbones.pkl'
+def to_pkl(backbones, pkl_file='./protein_backbones.pkl'):
     with open(pkl_file,'wb') as f:
-        pkl.dump(backbones_std, f, protocol=pkl.HIGHEST_PROTOCOL)
+        pkl.dump(backbones, f, protocol=pkl.HIGHEST_PROTOCOL)
 
 
-def load_data(path):
-    pkl_file = path + '/protein_backbones.pkl'
+def load_data(pkl_file='./protein_backbones.pkl'):
     with open(pkl_file,'rb') as f:
         datas = pkl.load(f)
     return datas
@@ -66,8 +65,9 @@ def load_data(path):
 
 if __name__ == "__main__":
 
-    path = "/home/phy-zhumy/torch/datas/LH_Combined_Chothia/"
+    path = "../datas/LH_Combined_Chothia/"
     pdbs = pdb_files(path)
     backbones = get_backbones(pdbs)
     backbones_std = standardize(backbones)
     to_pkl(backbones_std)
+    to_pkl(backbones, pkl_file='./protein_backbones_all.pkl')

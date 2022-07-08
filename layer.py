@@ -174,7 +174,7 @@ class Struct2Map(layers.Layer):
     def call(self, inputs):
         square = tf.expand_dims(tf.reduce_sum(tf.square(inputs), axis=-1), axis=-1)
         cross = tf.einsum('ijk,ikm->ijm', inputs, tf.transpose(inputs, perm=(0, 2, 1)))
-        contact_maps = tf.expand_dims(tf.sqrt(tf.math.abs(square + tf.transpose(square, perm=(0, 2, 1)) - cross*2)), axis=-1)
+        contact_maps = tf.expand_dims(tf.sqrt(tf.math.abs(square + tf.transpose(square, perm=(0, 2, 1)) - cross*2  + 1e-10)), axis=-1)
         return contact_maps
 
 
@@ -188,8 +188,8 @@ class Dihedral_phi(layers.Layer):
         n0  =tf.linalg.cross(b_vectors[:, :, 1], b_vectors[:, :, 2])
 
         # Normalize vectors
-        n2 = n2/tf.reshape(tf.sqrt(tf.einsum("ijk,ijk->ij", n2, n2)), (tf.shape(inputs)[0], -1, 1))
-        n0 = n0/tf.reshape(tf.sqrt(tf.einsum("ijk,ijk->ij", n0, n0)), (tf.shape(inputs)[0], -1, 1))
+        n2 = n2/tf.reshape(tf.sqrt(tf.math.abs(tf.einsum("ijk,ijk->ij", n2, n2) + 1e-8)), (tf.shape(inputs)[0], -1, 1))
+        n0 = n0/tf.reshape(tf.sqrt(tf.math.abs(tf.einsum("ijk,ijk->ij", n0, n0) + 1e-8)), (tf.shape(inputs)[0], -1, 1))
         cos = tf.einsum("ijk,ijk->ij", n0, n2)
         return cos
 
@@ -204,7 +204,7 @@ class Dihedral_psi(layers.Layer):
         n1  =tf.linalg.cross(b_vectors[:, :, 0], b_vectors[:, :, 2])
 
         # Normalize vectors
-        n2 = n2/tf.reshape(tf.sqrt(tf.einsum("ijk,ijk->ij", n2, n2)), (tf.shape(inputs)[0], -1, 1))
-        n1 = n1/tf.reshape(tf.sqrt(tf.einsum("ijk,ijk->ij", n1, n1)), (tf.shape(inputs)[0], -1, 1))
+        n2 = n2/tf.reshape(tf.sqrt(tf.math.abs(tf.einsum("ijk,ijk->ij", n2, n2) + 1e-8)), (tf.shape(inputs)[0], -1, 1))
+        n1 = n1/tf.reshape(tf.sqrt(tf.math.abs(tf.einsum("ijk,ijk->ij", n1, n1) + 1e-8)), (tf.shape(inputs)[0], -1, 1))
         cos = tf.einsum("ijk,ijk->ij", n1, n2)
         return cos

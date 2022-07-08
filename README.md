@@ -1,3 +1,6 @@
-# protein-vae
+# VAE-Protein(Variational Autoencoder for Generating Protein Backbone)
 
-tensorflow version for ig-VAE https://github.com/ProteinDesignLab/IgVAE
+VAE-Protein is a generative model for Generating backbones of proteins.
+Tensorflow version for ig-VAE https://github.com/ProteinDesignLab/IgVAE
+
+​
